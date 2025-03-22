@@ -60,4 +60,15 @@ public class FindPatientRecord extends BaseClass {
         getFindPatienttableFirstRecord().click();
     }
 
+    @FindBy(xpath = "//td[contains(text(), 'No matching records found')]")
+    private WebElement noMatchingRecordsFoundElement;
+
+    public WebElement getNoMatchingRecordsFoundElement() {
+        return noMatchingRecordsFoundElement;
+    }
+
+    public boolean verifynoMatchingRecordsFoundMessage() {
+        return getNoMatchingRecordsFoundElement().isDisplayed();
+    }
+
 }

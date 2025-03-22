@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class OpenMrsTest2 {
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/ChromeDrivers/chromedriver132v.exe");
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/ChromeDrivers/chromedriver134v.exe");
         WebDriver driver = new ChromeDriver();
         LoginPage loginPage = new LoginPage(driver);
         HomePage homePage = new HomePage(driver);
@@ -62,13 +62,50 @@ public class OpenMrsTest2 {
                                     findPatientRecord.clickFindPatientTableFirstRecord();
                                     if (detailsPage.verifyPatientNameInPatientDetailsPage("Venu, M")) {
                                         System.out.println("Find record working as expected...");
+
+                                        //Start visit and Add Attachments..
+                                        homePage.clickTile("Find Patient Record");
+                                        findPatientRecord.verifyPageName("Find Patient Record");
+                                        findPatientRecord.enterpatientSearchValue("Venu M");
+                                        findPatientRecord.clickFindPatientTableFirstRecord();
+                                        detailsPage.clickStartVisitElement();
+                                        if (detailsPage.veriftVisitTab()) {
+                                            System.out.println("Start Visit Available......");
+                                            detailsPage.clickAttachmentLink();
+                                            String filePath = System.getProperty("user.dir") + "src/main/resources/Files/venu sign.jpg";
+                                            detailsPage.uploadFile(filePath, "Test1");
+                                            if (detailsPage.verifyFileUpload("Test1")) {
+                                                System.out.println("File Upload Successfull.........");
+
+                                                // Delete Patient Record...
+
+                                                detailsPage.clickHomeIcon();
+                                                homePage.clickTile("Find Patient Record");
+                                                findPatientRecord.verifyPageName("Find Patient Record");
+                                                findPatientRecord.enterpatientSearchValue("Venu M");
+                                                findPatientRecord.clickFindPatientTableFirstRecord();
+                                                detailsPage.clickDeletePatient();
+                                                detailsPage.enterDeleteReason("Others");
+                                                detailsPage.clickDeleteConfirmButton();
+                                                findPatientRecord.enterpatientSearchValue("Venu M");
+
+                                                if (findPatientRecord.verifynoMatchingRecordsFoundMessage()) {
+                                                    System.out.println("Patient Record Is Deleted....");
+                                                } else {
+                                                    System.out.println("Patient Record Is Not Deletec");
+                                                }
+                                            } else {
+                                                System.out.println("File Upload Failed");
+                                            }
+                                        } else {
+                                            System.out.println("Start Visits Not Available");
+                                        }
                                     } else {
                                         System.out.println("Find record working as not expected");
                                     }
                                 } else {
                                     System.out.println("Filtered patient record not correct");
                                 }
-                                //homePage.clicklogoutElement();
                             } else {
                                 System.out.println("patient name is displayed not correctly in patient details page....");
                             }
